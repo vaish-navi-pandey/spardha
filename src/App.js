@@ -1,25 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import Sidebar from './components/Sidebar';
+import MatchList from './components/MatchList';
+import sportsData from './sportsData';
+import './styles.css';
 
-function App() {
+
+const App = () => {
+  const sports = Object.keys(sportsData);
+  const [selectedSport, setSelectedSport] = useState(sports[0]);
+  const [showDetails, setShowDetails] = useState([]);
+
+  const handleSelectSport = (sport) => {
+    setSelectedSport(sport);
+  };
+
+  const handleToggleDetails = (sportIndex, matchIndex) => {
+    setShowDetails((prevDetails) => {
+      const updatedDetails = [...prevDetails];
+      updatedDetails[sportIndex] = updatedDetails[sportIndex] || [];
+      updatedDetails[sportIndex][matchIndex] = !(
+        updatedDetails[sportIndex][matchIndex] || false
+      );
+      return updatedDetails;
+    });
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+     
+      <Sidebar sports={sports} onSelectSport={handleSelectSport} selectedSport={selectedSport} />
+      <div className="content">
+        <div className="image-container">
+          <img src={`/images/${selectedSport}.jpeg`} alt={selectedSport} />
+        </div>
+        <MatchList
+          matches={sportsData[selectedSport]}
+          showDetails={showDetails}
+          onToggleDetails={handleToggleDetails}
+        />
+      </div>
     </div>
   );
-}
+};
 
 export default App;
